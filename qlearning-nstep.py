@@ -8,6 +8,7 @@ from collections import defaultdict, namedtuple
 
 matplotlib.style.use('ggplot')
 
+# variable used for statistics
 EpisodeStats = namedtuple("Stats",["episode_lengths", "episode_rewards"])
 
 # Create gym environment.
@@ -23,11 +24,8 @@ def createEpsilonGreedyPolicy(Q, epsilon, num_actions):
     """
     def policyFunction(state):
         Action_probabilities = np.ones(num_actions, dtype=float) * epsilon / num_actions
-        print(Action_probabilities)
         best_action = np.argmax(Q[state])
-        print(best_action)
         Action_probabilities[best_action] += (1.0 - epsilon)
-        print(Action_probabilities[best_action])
         return Action_probabilities
 
     return policyFunction
@@ -44,6 +42,7 @@ def qLearning(env, num_episodes, discount_factor=1.0,
     # A nested dictionary that maps
     # state -> (action -> action-value).
     Q = defaultdict(lambda: np.zeros(env.action_space.n))
+    print("env.action_space.n %s" % env.action_space.n)
 
     # Keeps track of useful statistics
     stats = EpisodeStats(
@@ -56,25 +55,28 @@ def qLearning(env, num_episodes, discount_factor=1.0,
 
     # For every episode
     for ith_episode in range(num_episodes):
+        print("Episode %s" % ith_episode)
+        print(dict(Q))
 
         # Reset the environment and pick the first action
         state = env.reset()
 
         for t in itertools.count():
+            print("---------------")
 
             # get probabilities of all actions from current state
             action_probabilities = policy(state)
 
             # choose action according to
             # the probability distribution
-            print(np.arange(
-                len(action_probabilities)))
             action = np.random.choice(np.arange(
                 len(action_probabilities)),
                 p=action_probabilities)
+            print("state " + str(state) + " action " + str(action))
 
             # take action and get reward, transit to next state
             next_state, reward, done, _ = env.step(action)
+            print("next state " + str(next_state) + " reward " + str(reward))
 
             # Update statistics
             stats.episode_rewards[ith_episode] += reward
@@ -82,11 +84,15 @@ def qLearning(env, num_episodes, discount_factor=1.0,
 
             # TD Update
             best_next_action = np.argmax(Q[next_state])
+            print("next best_next_action " + str(best_next_action))
             td_target = reward + discount_factor * Q[next_state][best_next_action]
+            print("td_target " + str(td_target))
             td_delta = td_target - Q[state][action]
+            print("td_delta " + str(td_delta))
             Q[state][action] += alpha * td_delta
+            print("Q[state][action] " + str(Q[state][action]))
 
-            # done is True if episode terminated
+            # episode terminated if env return Done or after 50 movements
             if (done or t == 50):
                 break
 
@@ -131,9 +137,9 @@ def plot_episode_stats(stats, smoothing_window=10, noshow=False):
 
     return fig1, fig2, fig3
 
-# Train the model.ç
+# Train the model
 print("training model")
-Q, stats = qLearning(env, 200)
+Q, stats = qLearning(env, 100, discount_factor=0.6)
 
 # plot important statistics
 print("plot stats")

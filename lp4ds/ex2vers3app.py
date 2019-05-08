@@ -1,6 +1,6 @@
 import os
 from flask import Flask, request, render_template, jsonify
-from ex2tw import TwitterClient
+from lp4ds.ex2vers3 import TwitterClient
 
 app = Flask(__name__)
 # Setup the client <query string, retweets_only bool, with_sentiment bool>

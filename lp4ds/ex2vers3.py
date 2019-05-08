@@ -3,6 +3,7 @@ import re
 import tweepy
 from tweepy import OAuthHandler
 from textblob import TextBlob
+from private import PersTwitterKey
 
 class TwitterClient(object):
     '''
@@ -11,10 +12,11 @@ class TwitterClient(object):
 
     def __init__(self, query, retweets_only=False, with_sentiment=False):
         # keys and tokens from the Twitter Dev Console
-        consumer_key = 'FHXdD0vLTJwqlCsMnKKJ5Fq4W'
-        consumer_secret = 'lmnXutLWC9fiB1Nt0GycELfnd0SjNBIPkLnU6N7pc7OfTK1rKn'
-        access_token = '14133556-Av3JD8lpGWn4uUncIYMFlusswa9WreFwsWDg70pA5'
-        access_token_secret = 's7Oh8CpvDRi5P93cQNw02xJyiWzKmcf8OGVLYtSVVs7FF'
+        consumer_key = PersTwitterKey.TW_CONSUMER_KEY.value
+        consumer_secret = PersTwitterKey.TW_CONSUMER_SECRET.value
+
+        access_token = PersTwitterKey.TW_ACCESS_TOKEN.value
+        access_token_secret = PersTwitterKey.TW_ACCESS_TOKEN_SECRET.value
         # Attempt authentication
         try:
             self.auth = OAuthHandler(consumer_key, consumer_secret)

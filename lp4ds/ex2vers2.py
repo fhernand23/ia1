@@ -2,16 +2,17 @@ import tweepy
 from textblob import TextBlob
 # French adaptor
 from textblob_fr import PatternTagger, PatternAnalyzer
+from private import PersTwitterKey
 
 import numpy as np
 import operator
 
 # Step 1 - Authenticate
-consumer_key = 'FHXdD0vLTJwqlCsMnKKJ5Fq4W'
-consumer_secret = 'lmnXutLWC9fiB1Nt0GycELfnd0SjNBIPkLnU6N7pc7OfTK1rKn'
+consumer_key = PersTwitterKey.TW_CONSUMER_KEY.value
+consumer_secret = PersTwitterKey.TW_CONSUMER_SECRET.value
 
-access_token = '14133556-Av3JD8lpGWn4uUncIYMFlusswa9WreFwsWDg70pA5'
-access_token_secret = 's7Oh8CpvDRi5P93cQNw02xJyiWzKmcf8OGVLYtSVVs7FF'
+access_token = PersTwitterKey.TW_ACCESS_TOKEN.value
+access_token_secret = PersTwitterKey.TW_ACCESS_TOKEN_SECRET.value
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
