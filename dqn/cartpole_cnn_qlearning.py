@@ -1,7 +1,6 @@
 import random
 import gym
 import numpy as np
-
 from collections import deque
 from keras.models import Sequential
 from keras.layers import Dense
@@ -11,9 +10,14 @@ from keras.layers.convolutional import MaxPooling2D
 from keras.layers import Dropout
 from keras.layers import Flatten
 import scipy
+import imageio
+from JSAnimation.IPython_display import display_animation
+from matplotlib import animation
+from IPython.display import display
+import matplotlib.pyplot as plt
 
 
-class player:
+class Player:
     def __init__(self, img_size, num_actions):
         self.img_size = img_size
         self.num_actions = num_actions
@@ -23,9 +27,9 @@ class player:
         self.epsilon_min = 0.01
         self.epsilon_decay = 0.995
         self.learning_rate = 0.001
-        self.model = self.buildCNN()
+        self.model = self.build_cnn()
 
-    def buildCNN(self):
+    def build_cnn(self):
         model = Sequential()
         model.add(Conv2D(32, kernel_size=(5, 5), input_shape=(64, 64, 1), activation='relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
@@ -35,8 +39,7 @@ class player:
         model.add(Dense(28, activation='relu'))
         # Output layer with two nodes representing Left and Right cart movements
         model.add(Dense(self.num_actions, activation='linear'))
-        model.compile(loss='mse',
-                      optimizer=Adam(lr=self.learning_rate))
+        model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
         return model
 
     def write_state(self, state, action, rewardm, next_state, done):
@@ -61,12 +64,11 @@ class player:
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
 
-# How many times to play the game
-EPISODES = 5000
 
 def rgb2gray(rgb):
     r,g,b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
     return 0.2989 * r + 0.5870 * g + 0.1140 * b
+
 
 def shapeState(img):
     # resize image and make grayscale
@@ -74,15 +76,6 @@ def shapeState(img):
     shaped = resized_gray.reshape(1,64,64,1)
     return shaped
 
-
-from JSAnimation.IPython_display import display_animation
-from matplotlib import animation
-from IPython.display import display
-# from IPython import get_ipython
-import matplotlib.pyplot as plt
-
-# %matplotlib inline
-# get_ipython().run_line_magic('matplotlib', 'inline')
 
 def display_frames_as_gif(frames):
     # Displays a list of frames as a gif, with controls
@@ -96,12 +89,14 @@ def display_frames_as_gif(frames):
     display(display_animation(anim, default_mode='loop'))
 
 
+# How many times to play the game
+EPISODES = 5000
 env = gym.make('CartPole-v1')
 state_size = env.observation_space.shape[0]
 # feed 64 by 64 grayscale images into CNN
 state_size = (64, 64)
 action_size = env.action_space.n
-agent = player(state_size, action_size)
+agent = Player(state_size, action_size)
 done = False
 batch_size = 32
 
@@ -135,7 +130,6 @@ for e in range(EPISODES):
 
 print("Best Score: {}".format(max_score))
 
-import imageio
 imageio.mimsave("best.gif", best, 'GIF', duration=0.05)
 
 display_frames_as_gif(best)
