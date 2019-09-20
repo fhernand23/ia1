@@ -52,40 +52,32 @@ print("Data in Portuguese with Label quality not verified: " + str(df_por_doubt.
 # clean text
 df['title'] = df['title'].apply(clean_text)
 
-train_size = int(df.size * .7)
-print ("Train size: %d" % train_size)
-print ("Test size: %d" % (df.size - train_size))
-
-train_title = df['title'][0:train_size]
-train_category = df['category'][0:train_size]
-
-test_title = df['title'][train_size:]
-test_category = df['category'][train_size:]
-
-print('train_title shape:', train_title.shape)
-print('train_category shape:', train_category.shape)
-print('test_title shape:', test_title.shape)
-print('test_category shape:', test_category.shape)
-
-max_words = 2000
-tokenize = text.Tokenizer(num_words=max_words, char_level=False)
-
-tokenize.fit_on_texts(train_title) # only fit on train
-x_train = tokenize.texts_to_matrix(train_title)
-x_test = tokenize.texts_to_matrix(test_title)
-
-encoder = LabelEncoder()
-encoder.fit(train_category)
-y_train = encoder.transform(train_category)
-y_test = encoder.transform(test_category)
+# 70% train, 30% test
+X = df.title
+y = df.category
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state = 42)
 
 
-num_classes = np.max(y_train) + 1
-y_train = utils.to_categorical(y_train, num_classes)
-y_test = utils.to_categorical(y_test, num_classes)
+max_words = 50
+# tokenize = text.Tokenizer(num_words=max_words, char_level=False)
 
-print('x_train shape:', x_train.shape)
-print('x_test shape:', x_test.shape)
+# tokenize.fit_on_texts(train_title) # only fit on train
+# x_train = tokenize.texts_to_matrix(train_title)
+# x_test = tokenize.texts_to_matrix(test_title)
+
+# encoder = LabelEncoder()
+# encoder.fit(train_category)
+# y_train = encoder.transform(train_category)
+# y_test = encoder.transform(test_category)
+
+
+# num_classes = np.max(y_train) + 1
+num_classes = categories.size
+# y_train = utils.to_categorical(y_train, num_classes)
+# y_test = utils.to_categorical(y_test, num_classes)
+
+print('X_train shape:', X_train.shape)
+print('X_test shape:', X_test.shape)
 print('y_train shape:', y_train.shape)
 print('y_test shape:', y_test.shape)
 
@@ -104,13 +96,16 @@ model.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
-history = model.fit(x_train, y_train,
+history = model.fit(X_train, y_train,
                     batch_size=batch_size,
                     epochs=epochs,
                     verbose=1,
                     validation_split=0.1)
 
-score = model.evaluate(x_test, y_test,
+score = model.evaluate(X_test, y_test,
                        batch_size=batch_size, verbose=1)
 print(score)
-# print('Test accuracy:', score[1])
+print('Test accuracy:', score[1])
+
+# make 4 neural networks
+# predict for all
