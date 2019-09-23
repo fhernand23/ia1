@@ -58,7 +58,7 @@ y = df.category
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state = 42)
 
 
-max_words = 50
+max_words = 10000
 # tokenize = text.Tokenizer(num_words=max_words, char_level=False)
 
 # tokenize.fit_on_texts(train_title) # only fit on train
