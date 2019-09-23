@@ -82,7 +82,7 @@ print('y_train shape:', y_train.shape)
 print('y_test shape:', y_test.shape)
 
 batch_size = 32
-epochs = 2
+epochs = 20
 
 # Build the model
 model = Sequential()
