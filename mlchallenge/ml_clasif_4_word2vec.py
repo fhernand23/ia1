@@ -26,31 +26,18 @@ def clean_text(text):
     return text
 
 
-TRAIN_CSV_PATH = "./files/train_short.csv"
-TEST_CSV_PATH = "./files/test.csv"
+TRAIN_CSV_PATH = "./files/train_esp_ok.csv"
 
 df = pd.read_csv(TRAIN_CSV_PATH)
-
-# print("Head")
-# print(df.head())
-# print("Describe")
-# print(df.describe())
 
 # get categories
 categories = df.category.unique()
 
-# split by Label quality
-df_ok = df[df['label_quality'] == 'reliable']
-df_doubt = df[df['label_quality'] == 'unreliable']
-
-print(categories)
 print("Categories: " + str(categories.size))
 print("Total data: " + str(df.size))
-print("Data with Label quality verified: " + str(df_ok.size))
-print("Data with Label quality not verified: " + str(df_doubt.size))
 
 # clean text
-df['title'] = df['title'].apply(clean_text)
+#df['title'] = df['title'].apply(clean_text)
 
 X = df.title
 y = df.category

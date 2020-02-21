@@ -16,7 +16,6 @@ BAD_SYMBOLS_RE = re.compile('[^0-9a-z #+_]')
 STOPWORDS = set(stopwords.words('english'))
 
 
-# clean title text
 def clean_text(text):
     text = BeautifulSoup(text, "lxml").text  # HTML decoding
     text = text.lower()  # lowercase text
@@ -26,41 +25,28 @@ def clean_text(text):
     return text
 
 
-TRAIN_CSV_PATH = "./files/train_short.csv"
-TEST_CSV_PATH = "./files/test.csv"
+TRAIN_CSV_PATH = "./files/train_esp_ok.csv"
 
 df = pd.read_csv(TRAIN_CSV_PATH)
 
 # get categories
 categories = df.category.unique()
-# Languages: ['spanish' 'portuguese']
-# Qualities: ['unreliable' 'reliable']
-# Split by Label quality & Language
-df_esp_ok = df[(df['label_quality'] == 'reliable') & (df['language'] == 'spanish')]
-df_esp_doubt = df[(df['label_quality'] == 'unreliable') & (df['language'] == 'spanish')]
-df_por_ok = df[(df['label_quality'] == 'reliable') & (df['language'] == 'portuguese')]
-df_por_doubt = df[(df['label_quality'] == 'unreliable') & (df['language'] == 'portuguese')]
 
-print(categories)
 print("Categories: " + str(categories.size))
 print("Total data: " + str(df.size))
-print("Data in Spanish with Label quality verified: " + str(df_esp_ok.size))
-print("Data in Spanish with Label quality not verified: " + str(df_esp_doubt.size))
-print("Data in Portuguese with Label quality verified: " + str(df_por_ok.size))
-print("Data in Portuguese with Label quality not verified: " + str(df_por_doubt.size))
 
 # clean text
 df['title'] = df['title'].apply(clean_text)
 
-train_size = int(df.size * .7)
-print ("Train size: %d" % train_size)
-print ("Test size: %d" % (df.size - train_size))
 
-train_title = df['title'][0:train_size]
-train_category = df['category'][0:train_size]
+# train_title = df['title'][0:train_size]
+# train_category = df['category'][0:train_size]
 
-test_title = df['title'][train_size:]
-test_category = df['category'][train_size:]
+# test_title = df['title'][train_size:]
+# test_category = df['category'][train_size:]
+X = df.title
+y = df.category
+train_title, test_title, train_category, test_category = train_test_split(X, y, test_size=0.3, random_state = 42)
 
 print('train_title shape:', train_title.shape)
 print('train_category shape:', train_category.shape)
@@ -100,17 +86,17 @@ model.add(Dropout(0.5))
 model.add(Dense(num_classes))
 model.add(Activation('softmax'))
 
-model.compile(loss='categorical_crossentropy',
-              optimizer='adam',
-              metrics=['accuracy'])
+# model.compile(loss='categorical_crossentropy',
+#               optimizer='adam',
+#               metrics=['accuracy'])
 
-history = model.fit(x_train, y_train,
-                    batch_size=batch_size,
-                    epochs=epochs,
-                    verbose=1,
-                    validation_split=0.1)
+# history = model.fit(x_train, y_train,
+#                     batch_size=batch_size,
+#                     epochs=epochs,
+#                     verbose=1,
+#                     validation_split=0.1)
 
-score = model.evaluate(x_test, y_test,
-                       batch_size=batch_size, verbose=1)
-print(score)
+# score = model.evaluate(x_test, y_test,
+#                        batch_size=batch_size, verbose=1)
+# print(score)
 # print('Test accuracy:', score[1])

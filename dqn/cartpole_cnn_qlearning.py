@@ -42,7 +42,7 @@ class Player:
         model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
         return model
 
-    def write_state(self, state, action, rewardm, next_state, done):
+    def write_state(self, state, action, reward, next_state, done):
         self.q_table.append((state, action, reward, next_state, done))
 
     def act(self, state):

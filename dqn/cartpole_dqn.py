@@ -29,6 +29,7 @@ class DQNSolver:
         self.memory = deque(maxlen=MEMORY_SIZE)
 
         self.model = Sequential()
+        print("input_shape: " + str((observation_space,)))
         self.model.add(Dense(24, input_shape=(observation_space,), activation="relu"))
         self.model.add(Dense(24, activation="relu"))
         self.model.add(Dense(self.action_space, activation="linear"))
@@ -51,6 +52,8 @@ class DQNSolver:
             q_update = reward
             if not terminal:
                 q_update = (reward + GAMMA * np.amax(self.model.predict(state_next)[0]))
+            print("state: " + str(state))
+            print("state shape: " + str(type(state)))
             q_values = self.model.predict(state)
             q_values[0][action] = q_update
             self.model.fit(state, q_values, verbose=0)
@@ -81,7 +84,7 @@ def cartpole():
             state = state_next
             if terminal:
                 print("Run: " + str(run) + ", exploration: " + str(dqn_solver.exploration_rate) + ", score: " + str(step))
-                score_logger.add_score(step, run)
+                #score_logger.add_score(step, run)
                 break
             dqn_solver.experience_replay()
 
